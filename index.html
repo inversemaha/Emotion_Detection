@@ -167,6 +167,14 @@
 					startbutton.disabled = null;
 				}
 				
+				function VideoCapture(stream) {
+					vid.srcObject = stream;
+				}
+
+				function Error(e) {
+					alert("Error: " + e);
+				}
+				
 				/*var insertAltVideo = function(video) {
 					if (supports_video()) {
 						if (supports_ogg_theora_video()) {
@@ -187,25 +195,18 @@
 				if (navigator.getUserMedia) {
 					// set up stream
 					
-					var videoSelector = {video : true};
-					if (window.navigator.appVersion.match(/Chrome\/(.*?) /)) {
-						var chromeVersion = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
-						if (chromeVersion < 20) {
-							videoSelector = "video";
-						}
-					};
-				
-					navigator.getUserMedia(videoSelector, function( stream ) {
-						if (vid.mozCaptureStream) {
-							vid.mozSrcObject = stream;
-						} else {
-							vid.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-						}
-						vid.play();
-					}, function() {
-						//insertAltVideo(vid);
-						alert("There was some problem trying to fetch video from your webcam. If you have a webcam, please make sure to accept when the browser asks for access to your webcam.");
-					});
+					navigator.getUserMedia({
+						video: {
+							frameRate: {
+								ideal: 24,
+								max: 30
+							},
+							facingMode:{ideal: "environment"},
+							width: 1280,
+							height: 720
+						},
+						audio: false
+					}, VideoCapture, Error);
 				} else {
 					//insertAltVideo(vid);
 					alert("This demo depends on getUserMedia, which your browser does not seem to support. :(");
